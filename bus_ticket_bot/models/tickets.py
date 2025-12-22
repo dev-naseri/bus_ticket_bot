@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import khayyam
 from peewee import Model, CharField, IntegerField, TextField, ForeignKeyField, \
     Check, DateTimeField
 from bus_ticket_bot.models.bot_instance import BotInstance
@@ -18,8 +19,7 @@ class Tickets(Model):
     )
     city = CharField(null=False, index=True)
     destination_terminal = CharField(null=True)
-    date = CharField(null=False, index=True)
-    hour = CharField(null=False, index=True)
+    date = DateTimeField(default=datetime.now, index=True)
     price = IntegerField(null=False, index=True)
     created_at = DateTimeField(default=datetime.now)
 
@@ -29,6 +29,9 @@ class Tickets(Model):
             Check("ticket_type IN ('VIP', 'Normal', 'Car')"),
             Check("price > 0")
         ]
+        indexes = (
+            (('date', 'city'), True),
+        )
 
 
 def get_default_instance():

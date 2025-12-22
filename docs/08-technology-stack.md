@@ -29,6 +29,7 @@
 - python.sqlite3
 - peewee
 - pyTelegramBotAPI
+- khayyam
 - Any additional libraries required for date handling, validation, etc.
 
 ---

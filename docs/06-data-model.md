@@ -18,19 +18,18 @@ The main entities are:
 ## Tables / Entities
 
 ### Tickets
-| Column             | Type    | Description / Constraints                                   |
-|-------------------|---------|-------------------------------------------------------------|
-| id                | integer | Primary Key                                                |
-| name              | string  | Ticket name                                                |
-| ticket_type       | string  | One of [VIP, NORMAL, CAR]                                  |
-| origin_city       | string  | Foreign Key → Bot_Instance(city_name)                       |
-| origin_terminal   | string  | Foreign Key → Bot_Instance(terminal_name)                  |
-| city              | string  | Destination city                                           |
-| destination_terminal | string | Optional                                                   |
-| date              | string  | Format: YYYY/MM/DD                                         |
-| hour              | string  | Format: HH:MM                                              |
-| price             | integer | Must be greater than 0                                     |
-| created_at        | datetime| Default = CURRENT_DATE                                     |
+| Column             | Type     | Description / Constraints                 |
+|-------------------|----------|-------------------------------------------|
+| id                | integer  | Primary Key                               |
+| name              | string   | Ticket name                               |
+| ticket_type       | string   | One of [VIP, NORMAL, CAR]                 |
+| origin_city       | string   | Foreign Key → Bot_Instance(city_name)     |
+| origin_terminal   | string   | Foreign Key → Bot_Instance(terminal_name) |
+| city              | string   | Destination city                          |
+| destination_terminal | string   | Optional                                  |
+| date              | datetime | Format: YYYY-MM-DD HH:MM:SS        |
+| price             | integer  | Must be greater than 0                    |
+| created_at        | datetime | Default = CURRENT_DATE                    |
 
 ---
 

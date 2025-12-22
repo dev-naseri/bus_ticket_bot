@@ -8,4 +8,28 @@ class BotInstanceService(BaseService):
     _service_name = "BotInstanceService"
 
     @classmethod
-    def change_name(cls, ):
+    def change_field(cls, **kwargs):
+        # Validate Field
+        if 1 < len(kwargs) < 1:
+            Logger.service.error(
+                f"change_filed in {cls._service_name} only get one argument not "
+                f"more."
+            )
+            return "MORE_THAN_ONE_ARGUMENT_ERROR"
+
+        for key, value in kwargs.items():
+            result = cls.update(
+                find_by={"id": 1},
+                update_data={key: value}
+            )
+
+        if result.success:
+            Logger.service.error(
+                f"Successfully changed '{kwargs}' in '{cls._service_name} "
+                f"Model'."
+            )
+            return result.status
+        Logger.service.error(
+            f"Failed to change '{kwargs}' in '{cls._service_name} Model'."
+        )
+        return False

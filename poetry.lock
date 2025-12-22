@@ -148,6 +148,18 @@ files = [
 all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2)"]
 
 [[package]]
+name = "khayyam"
+version = "3.0.17"
+description = "Persian Date & Time library (aka: Jalali Calendar) with timezone, DST(daylight-saving), full formatting & parsing support for python 2 & 3 including c extention"
+optional = false
+python-versions = "*"
+files = [
+    {file = "Khayyam-3.0.17-cp27-cp27m-macosx_10_11_x86_64.whl", hash = "sha256:aa389c52bda8813ca7af177ea19077455ac7ee64ae44c3eac44dc675be1bb316"},
+    {file = "Khayyam-3.0.17-cp36-cp36m-macosx_10_11_x86_64.whl", hash = "sha256:8b444aa453ad72d549e065be09a3312e6140a8e015850a890b2f27c8a435eade"},
+    {file = "Khayyam-3.0.17.tar.gz", hash = "sha256:d0a30c6e9caa56a7f730879df8f3fe0ad7d9fa8c57b0d8f479cfa0460a7647f2"},
+]
+
+[[package]]
 name = "peewee"
 version = "3.18.3"
 description = "a little orm"
@@ -222,4 +234,4 @@ zstd = ["backports-zstd (>=1.0.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f15c6939448bcef96c72bba0dbaed9c662463bf5ef8e10c6b60a7416a03f17f2"
+content-hash = "e0812978f0b74db900428f561cb574b947c3e173a9f2e5e441370114a14432e3"

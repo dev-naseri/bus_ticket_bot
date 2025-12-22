@@ -1,8 +1,6 @@
 from abc import ABC
 from typing import Dict, Optional, Any
-
 from peewee import IntegrityError, OperationalError
-
 from bus_ticket_bot.models.db_settings import db
 from bus_ticket_bot.utils.logger import Logger
 from bus_ticket_bot.services.status_codes import StatusCode
@@ -27,12 +25,6 @@ class BaseService(ABC):
 
     @classmethod
     def create(cls, **data) -> ServiceResult:
-        """
-        Create a new record.
-
-        :param data: Model fields and values
-        :return: ServiceResult
-        """
         try:
             with db.atomic():
                 instance = cls._model.create(**data)
@@ -82,26 +74,10 @@ class BaseService(ABC):
 
     @classmethod
     def delete(cls, **filters) -> ServiceResult:
-        """
-        Delete a single record using filters.
-
-        :param filters: Field-value pairs
-        :return: ServiceResult
-        """
         try:
             query = cls._model.select()
 
-            for field, value in filters.items():
-                if field not in cls._model._meta.fields:
-                    Logger.service.error(
-                        f"[{cls._service_name}] Delete failed: invalid field '{field}'."
-                    )
-                    return ServiceResult(
-                        success=False,
-                        status=StatusCode.INVALID_FIELD,
-                        message=f"Invalid field: {field}"
-                    )
-                query = query.where(getattr(cls._model, field) == value)
+            query = cls._apply_where(query, filters)
 
             instance = query.get_or_none()
             if not instance:
@@ -151,26 +127,10 @@ class BaseService(ABC):
 
     @classmethod
     def select(cls, **filters) -> ServiceResult:
-        """
-        Retrieve a single record.
-
-        :param filters: Field-value pairs
-        :return: ServiceResult
-        """
         try:
             query = cls._model.select()
 
-            for field, value in filters.items():
-                if field not in cls._model._meta.fields:
-                    Logger.service.error(
-                        f"[{cls._service_name}] Select failed: invalid field '{field}'."
-                    )
-                    return ServiceResult(
-                        success=False,
-                        status=StatusCode.INVALID_FIELD,
-                        message=f"Invalid field: {field}"
-                    )
-                query = query.where(getattr(cls._model, field) == value)
+            query = cls._apply_where(query, filters)
 
             instance = query.get_or_none()
             if not instance:
@@ -218,13 +178,6 @@ class BaseService(ABC):
         where: Optional[Dict[str, Any]] = None,
         limit: Optional[int] = None,
     ) -> ServiceResult:
-        """
-        Retrieve multiple records.
-
-        :param where: Optional filters
-        :param limit: Optional limit
-        :return: ServiceResult
-        """
         if limit is not None and not isinstance(limit, int):
             return ServiceResult(
                 success=False,
@@ -243,14 +196,7 @@ class BaseService(ABC):
             query = cls._model.select()
 
             if where:
-                for field, value in where.items():
-                    if field not in cls._model._meta.fields:
-                        return ServiceResult(
-                            success=False,
-                            status=StatusCode.INVALID_FIELD,
-                            message=f"Invalid field: {field}"
-                        )
-                    query = query.where(getattr(cls._model, field) == value)
+                query = cls._apply_where(query, where)
 
             if limit:
                 query = query.limit(limit)
@@ -286,13 +232,6 @@ class BaseService(ABC):
 
     @classmethod
     def update(cls, find_by: Dict, update_data: Dict) -> ServiceResult:
-        """
-        Update a single record.
-
-        :param find_by: Filters to locate record
-        :param update_data: Fields to update
-        :return: ServiceResult
-        """
         if not isinstance(find_by, dict) or not isinstance(update_data, dict):
             return ServiceResult(
                 success=False,
@@ -303,14 +242,7 @@ class BaseService(ABC):
         try:
             query = cls._model.select()
 
-            for field, value in find_by.items():
-                if field not in cls._model._meta.fields:
-                    return ServiceResult(
-                        success=False,
-                        status=StatusCode.INVALID_FIELD,
-                        message=f"Invalid field: {field}"
-                    )
-                query = query.where(getattr(cls._model, field) == value)
+            query = cls._apply_where(query, find_by)
 
             instance = query.get_or_none()
             if not instance:
@@ -318,6 +250,21 @@ class BaseService(ABC):
                     success=False,
                     status=StatusCode.NOT_FOUND,
                     message="Record not found."
+                )
+
+            # Validate update_data fields
+            invalid_fields = [
+                field for field in update_data
+                if field not in cls._model._meta.fields
+            ]
+            if invalid_fields:
+                Logger.service.error(
+                    f"[{cls._service_name}] Invalid update fields: {invalid_fields}"
+                )
+                return ServiceResult(
+                    success=False,
+                    status=StatusCode.INVALID_FIELD,
+                    message=f"Invalid update fields: {', '.join(invalid_fields)}"
                 )
 
             with db.atomic():
@@ -354,3 +301,37 @@ class BaseService(ABC):
                 status=StatusCode.UNEXPECTED_ERROR,
                 message=str(exc)
             )
+
+    # -------------------- PRIVATE: APPLY WHERE --------------------
+
+    @classmethod
+    def _apply_where(cls, query, where: dict):
+        """
+        Apply where conditions with support for operators:
+        eq, gt, gte, lt, lte using Django-style __ syntax.
+        """
+        for key, value in where.items():
+            if "__" in key:
+                field_name, operator = key.split("__", 1)
+            else:
+                field_name, operator = key, "eq"
+
+            if field_name not in cls._model._meta.fields:
+                raise ValueError(f"Invalid field: {field_name}")
+
+            field = getattr(cls._model, field_name)
+
+            if operator == "eq":
+                query = query.where(field == value)
+            elif operator == "gt":
+                query = query.where(field > value)
+            elif operator == "gte":
+                query = query.where(field >= value)
+            elif operator == "lt":
+                query = query.where(field < value)
+            elif operator == "lte":
+                query = query.where(field <= value)
+            else:
+                raise ValueError(f"Invalid operator: {operator}")
+
+        return query

@@ -21,5 +21,3 @@ def create_db_tables():
         db.rollback()
         Logger.service.error(f"Failed to create database models because: {e}")
         return False
-
-create_db_tables()
