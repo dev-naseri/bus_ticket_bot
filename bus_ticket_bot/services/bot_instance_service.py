@@ -33,3 +33,18 @@ class BotInstanceService(BaseService):
             f"Failed to change '{kwargs}' in '{cls._service_name} Model'."
         )
         return False
+
+    @classmethod
+    def get_data(cls):
+        result = cls.select(id=1)
+
+        if result.success:
+            Logger.service.info(
+                f"Data from '{cls._service_name} Model' fetched successfully."
+            )
+            return result.data
+
+        Logger.service.error(
+            f"Failed to fetch data from '{cls._service_name} Model'."
+        )
+        return result.status

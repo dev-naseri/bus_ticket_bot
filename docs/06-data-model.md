@@ -45,26 +45,29 @@ The main entities are:
 ---
 
 ### Purchased_Tickets
-| Column        | Type    | Description / Constraints                                   |
-|---------------|---------|-------------------------------------------------------------|
-| id            | integer | Primary Key, Auto Increment                                  |
-| ticket_id     | integer | Foreign Key → Tickets(id)                                    |
-| user_id       | integer | Foreign Key → Users(id)                                      |
-| transaction_id| integer | Generated unique key                                         |
-| active        | boolean | Default = False                                             |
-| receipt       | string  | Telegram message ID linking to receipt in Transactions Group |
-| created_at    | datetime| Default = CURRENT_DATE                                       |
+| Column         | Type    | Description / Constraints                                    |
+|----------------|---------|--------------------------------------------------------------|
+| id             | integer | Primary Key, Auto Increment                                  |
+| telegram_id    | integer | Foreign Key → Users(telegram_id)                             |
+| ticket_id      | integer | Foreign Key → Tickets(id)                                    |
+| user_id        | integer | Foreign Key → Users(id)                                      |
+| transaction_id | integer | Generated unique key                                         |
+| active         | boolean | Default = False                                              |
+| receipt        | string  | Telegram message ID linking to receipt in Transactions Group |
+| created_at     | datetime| Default = CURRENT_DATE                                       |
 
 ---
 
 ### Refund_Requests
-| Column             | Type    | Description / Constraints                          |
-|-------------------|---------|--------------------------------------------------|
-| id                | integer | Primary Key                                      |
-| receipt_id        | string  | Foreign Key → Purchased_Tickets(receipt)        |
-| refund_request_id | string  | Telegram message ID                              |
-| reason            | string  | Optional                                         |
-| created_at        | datetime| Date of request                                  |
+| Column            | Type    | Description / Constraints                      |
+|-------------------|---------|------------------------------------------------|
+| id                | integer | Primary Key                                    |
+| transaction_id    | integer | Foreign Key → PurchasedTickets(transaction_id) |
+| telegram_id       | integer | Foreign Key → Users(telegram_id)               |
+| receipt_id        | string  | Foreign Key → Purchased_Tickets(receipt)       |
+| refund_request_id | string  | Telegram message ID                            |
+| reason            | string  | Optional                                       |
+| created_at        | datetime| Date of request                                |
 
 ---
 
@@ -98,6 +101,9 @@ The main entities are:
 ## Relationships
 - `Tickets (1)` → `Purchased_Tickets (N)`
 - `Users (1)` → `Purchased_Tickets (N)`
+- `Refound_Requests.telegram_id (1)` → `Users.telegram_id` 
+- `Purchase_Tickets.telegram_id (1)` → `Users.telegram_id` 
+- `Refound_Requests.transaction_id (1)` → `Purchased_Tickets.transaction_id` 
 - `Purchased_Tickets (1)` → `Refund_Requests (0..1)`
 - `Tickets.origin_city` → `Bot_Instance.city_name`
 - `Tickets.origin_terminal` → `Bot_Instance.terminal_name`

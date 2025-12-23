@@ -1,6 +1,14 @@
-from bus_ticket_bot.models.users import Users
-from bus_ticket_bot.services.users_service import UsersService
+from xml.sax import ContentHandler
 
-r = UsersService.select(id=1)
-t = r.data.created_at
-print(t)
+from bus_ticket_bot.bot.handlers.contact_us_handler import ContactUsHandler
+from bus_ticket_bot.bot.handlers.help_handler import HelpHandler
+from bus_ticket_bot.bot.handlers.start_handler import StartHandler
+from bus_ticket_bot.bot.utils.bot_connection import BotConnection
+
+
+StartHandler.register()
+HelpHandler.register()
+ContactUsHandler.register()
+
+
+BotConnection.get_bot().infinity_polling()

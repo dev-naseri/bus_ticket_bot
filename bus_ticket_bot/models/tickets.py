@@ -1,8 +1,6 @@
 from datetime import datetime
 
-import khayyam
-from peewee import Model, CharField, IntegerField, TextField, ForeignKeyField, \
-    Check, DateTimeField
+from peewee import Model, CharField, IntegerField, Check, DateTimeField
 from bus_ticket_bot.models.bot_instance import BotInstance
 from bus_ticket_bot.models.db_settings import db
 

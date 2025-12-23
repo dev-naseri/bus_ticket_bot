@@ -115,3 +115,17 @@ class TicketsService(BaseService):
             f"Failed to delete data from '{cls._service_name} Model'."
         )
         return result.status
+
+    @classmethod
+    def edit_ticket(cls, find_by, update_data):
+        result = cls.update(find_by, update_data)
+
+        if result.success:
+            Logger.service.info(
+                f"Successfully Updated Data on '{cls._service_name} Model'."
+            )
+            return result.status
+        Logger.service.error(
+            f"Failed to update data on '{cls._service_name} Model'."
+        )
+        return result.status
