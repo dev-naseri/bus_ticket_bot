@@ -3,17 +3,19 @@ from datetime import datetime
 from peewee import Model, CharField, IntegerField, Check, DateTimeField
 from bus_ticket_bot.models.bot_instance import BotInstance
 from bus_ticket_bot.models.db_settings import db
+from bus_ticket_bot.services.bot_instance_service import BotInstanceService
+
 
 class Tickets(Model):
     full_name = CharField(null=False)
     ticket_type = CharField(null=False, index=True)
     origin_city = CharField(
-        default=lambda: (get_default_instance().city_name
-        if get_default_instance() else "DefaultCity")
+        default=lambda: (BotInstanceService.get_data().city_name
+        if BotInstanceService.get_data().success else "DefaultTerminal")
     )
     origin_terminal = CharField(
-        default=lambda: (get_default_instance().terminal_name
-        if get_default_instance() else "DefaultTerminal")
+        default=lambda: (BotInstanceService.get_data().origin_terminal.terminal_name
+        if BotInstanceService.get_data().success else "DefaultTerminal")
     )
     city = CharField(null=False, index=True)
     destination_terminal = CharField(null=True)
@@ -30,10 +32,3 @@ class Tickets(Model):
         indexes = (
             (('date', 'city'), True),
         )
-
-
-def get_default_instance():
-    try:
-        return BotInstance.get()
-    except BotInstance.DoesNotExist:
-        return None

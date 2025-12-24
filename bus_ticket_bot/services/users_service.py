@@ -117,3 +117,78 @@ class UsersService(BaseService):
             f"{result.message}."
         )
         return result.status
+
+    @classmethod
+    def check_user_exist(cls, telegram_id):
+        """
+        if user exist in database return true
+        :param telegram_id: int
+        :return: bool (True of user exist else false)
+        """
+        if (
+                not telegram_id
+                or not isinstance(telegram_id, int)
+        ):
+            Logger.service.error(
+                f"Given telegram_id input for {cls._service_name} is not valid."
+            )
+            return "INVALID_INPUTS"
+
+        result = cls.select(
+            telegram_id=telegram_id
+        )
+
+        if result.success:
+            Logger.service.info(
+                f"User: {telegram_id} is exists."
+            )
+            return True
+
+        Logger.service.warning(
+            f"User: {telegram_id} is not exist in database.."
+        )
+        return False
+
+    @classmethod
+    def change_user_state(cls, telegram_id, state="Inactive"):
+        if not state in ["Inactive", "Transaction"] or not isinstance(telegram_id, int):
+            Logger.service.error(
+                "change_user_state inputs are not valid."
+            )
+            return False
+
+        result = cls.update(
+            find_by={"telegram_id": telegram_id},
+            update_data={"state": state}
+
+        )
+
+        if result.success:
+            Logger.service.info(
+                f"Change user {telegram_id} state to {state} in '{cls._service_name} Model'."
+            )
+            return state
+        Logger.service.error(
+            f"Failed to change user state in '{cls._service_name} Model'."
+        )
+        return False
+
+    @classmethod
+    def check_user_state(cls, telegram_id):
+        if not isinstance(telegram_id, int):
+            Logger.service.error(
+                "check_user_state inputs are not valid."
+            )
+            return None
+
+        result = cls.select(telegram_id=telegram_id)
+
+        if result.success:
+            Logger.service.info(
+                f"check_user_state: Fetched user: {telegram_id} from '{cls._service_name} Model'."
+            )
+            return result.data.state
+        Logger.service.error(
+            f"check_user_state: Failed to fetch user from '{cls._service_name} Model'."
+        )
+        return None
