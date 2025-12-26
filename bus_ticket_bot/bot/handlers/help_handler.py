@@ -12,7 +12,11 @@ class HelpHandler(BaseHandler):
 
     @classmethod
     def help_handler(cls, message):
-        msg = BotInstanceService.get_data().help_message
+        if cls.block_if_transaction(message):
+            return
+
+        instance = BotInstanceService.get_data()
+        msg = instance.help_message
 
         cls._conn.send_message(
             message.chat.id,

@@ -12,6 +12,9 @@ class ContactUsHandler(BaseHandler):
 
     @classmethod
     def contact_us_handler(cls, message):
+        if cls.block_if_transaction(message):
+            return
+
         msg = BotInstanceService.get_data().contact_us_message
 
         cls._conn.send_message(

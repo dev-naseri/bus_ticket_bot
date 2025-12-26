@@ -15,6 +15,9 @@ class StartHandler(BaseHandler):
 
     @classmethod
     def start_handler(cls, message):
+        if cls.block_if_transaction(message):
+            return
+
         check_user_exist = UsersService.check_user_exist(message.from_user.id)
         if not check_user_exist:
             create_user = UsersService.create_user(message.from_user.id,
@@ -25,7 +28,8 @@ class StartHandler(BaseHandler):
                 )
                 return
 
-        msg = BotInstanceService.get_data().start_message
+        bot_instance = BotInstanceService.get_data()
+        msg = bot_instance.start_message
 
         cls._conn.send_message(
             message.chat.id,

@@ -11,11 +11,11 @@ class Tickets(Model):
     ticket_type = CharField(null=False, index=True)
     origin_city = CharField(
         default=lambda: (BotInstanceService.get_data().city_name
-        if BotInstanceService.get_data().success else "DefaultTerminal")
+        if BotInstanceService.get_data() else "DefaultTerminal")
     )
     origin_terminal = CharField(
-        default=lambda: (BotInstanceService.get_data().origin_terminal.terminal_name
-        if BotInstanceService.get_data().success else "DefaultTerminal")
+        default=lambda: (BotInstanceService.get_data().terminal_name
+        if BotInstanceService.get_data() else "DefaultTerminal")
     )
     city = CharField(null=False, index=True)
     destination_terminal = CharField(null=True)

@@ -30,6 +30,9 @@ class BuyTicketsHandler(BaseHandler):
 
     @classmethod
     def buy_tickets_handler(cls, message):
+        if cls.block_if_transaction(message):
+            return
+
         cls._conn.send_message(
             message.chat.id,
             "Choose Ticket Type:",
@@ -38,6 +41,9 @@ class BuyTicketsHandler(BaseHandler):
 
     @classmethod
     def vip_ticket_handler(cls, message):
+        if cls.block_if_transaction(message):
+            return
+
         cls._conn.send_message(
             message.chat.id,
             "Please choose a date:",
@@ -46,6 +52,9 @@ class BuyTicketsHandler(BaseHandler):
 
     @classmethod
     def normal_ticket_handler(cls, message):
+        if cls.block_if_transaction(message):
+            return
+
         cls._conn.send_message(
             message.chat.id,
             "Please choose a date:",
@@ -54,6 +63,9 @@ class BuyTicketsHandler(BaseHandler):
 
     @classmethod
     def car_ticket_handler(cls, message):
+        if cls.block_if_transaction(message):
+            return
+
         cls._conn.send_message(
             message.chat.id,
             "Please choose a date:",
