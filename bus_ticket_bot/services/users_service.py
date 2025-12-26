@@ -192,3 +192,27 @@ class UsersService(BaseService):
             f"check_user_state: Failed to fetch user from '{cls._service_name} Model'."
         )
         return None
+
+    @classmethod
+    def get_user(cls, telegram_id):
+        if (
+            not telegram_id
+            or not isinstance(telegram_id, int)
+        ):
+            Logger.service.error(
+                f"Given telegram_id input for {cls._service_name} is not valid."
+            )
+            return "INVALID_INPUTS"
+
+        result = cls.select(telegram_id=telegram_id)
+
+        if result.success:
+            Logger.service.info(
+                f"User: {telegram_id}, Successfully Fetched from '{cls._service_name} Model'."
+            )
+            return result.data
+
+        Logger.service.error(
+            f"Fetching userfailed because: {result.message}."
+        )
+        return result.status

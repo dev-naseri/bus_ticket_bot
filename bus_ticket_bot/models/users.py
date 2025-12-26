@@ -8,9 +8,9 @@ class Users(Model):
     telegram_id = IntegerField(null=False, unique=True, index=True)
     full_name = CharField(null=True, max_length=30)
     phone_number = IntegerField(null=True)
-    nationality = BooleanField(default=1)  # 1 means iranian other means outsider
+    nationality = BooleanField(default=1)  # 1 = Native, 0 = Immigrant
+    national_id = CharField(null=True)
     open_transaction = CharField(default="empty")
-    passport_or_national_id = CharField(null=True)
     state = CharField(default="Inactive", index=True)
     warnings = IntegerField(default=0, index=True)
     created_at = DateTimeField(default=datetime.now)

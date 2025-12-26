@@ -34,14 +34,17 @@ The main entities are:
 ---
 
 ### Users
-| Column      | Type     | Description / Constraints                  |
-|-------------|----------|--------------------------------------------|
-| id          | integer  | Primary Key, Auto Increment                |
-| full_name   | string   | Optional                                   |
-| telegram_id | integer  | Unique                                     |
-| state       | string   | Default = "Inactive"                        |
-| warnings    | integer  | Default = 0 (user banned after 3 warnings) |
-| created_at  | datetime | Default = CURRENT_DATE                     |
+| Column       | Type     | Description / Constraints                  |
+|--------------|----------|--------------------------------------------|
+| id           | integer  | Primary Key, Auto Increment                |
+| telegram_id  | integer  | Unique                                     |
+| full_name    | string   | Optional                                   |
+| phone_number | integer  | Unique, Optional                           |
+| nationality  | bool     | 0 = Immigrant, 1 = Native                  |
+| national_id  | string   | Optional                                   |
+| state        | string   | Default = "Inactive"                       |
+| warnings     | integer  | Default = 0 (user banned after 3 warnings) |
+| created_at   | datetime | Default = CURRENT_DATE                     |
 
 ---
 

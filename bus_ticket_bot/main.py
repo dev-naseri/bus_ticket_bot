@@ -20,9 +20,6 @@ token = os.getenv("API_TOKEN")
 # BuyTicketsHandler.register()
 
 
-apihelper.ENABLE_MIDDLEWARE = True
-bot = TeleBot(token)
-
 
 
 blacklist= [8288322669]
